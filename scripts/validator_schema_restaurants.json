@@ -1,0 +1,58 @@
+{
+  "$jsonSchema": {
+    "bsonType": "object",
+    "required": [
+      "name",
+      "address",
+      "rating",
+      "type_of_food",
+      "url"
+    ],
+    "properties": {
+      "name": {
+        "bsonType": "string"
+      },
+      "address": {
+        "bsonType": "object",
+        "required": [
+          "street",
+          "city",
+          "postcode"
+        ],
+        "properties": {
+          "street": {
+            "bsonType": "string"
+          },
+          "city": {
+            "bsonType": "string"
+          },
+          "postcode": {
+            "bsonType": "string"
+          }
+        }
+      },
+      "rating": {
+        "oneOf": [
+          {
+            "bsonType": "int",
+            "minimum": 0,
+            "maximum": 6
+          },
+          {
+            "bsonType": "string",
+            "enum": [
+              "Not yet rated"
+            ]
+          }
+        ],
+        "description": "Int del 0 al 6 o Not yet rated."
+      },
+      "type_of_food": {
+        "bsonType": "string"
+      },
+      "url": {
+        "bsonType": "string"
+      }
+    }
+  }
+}

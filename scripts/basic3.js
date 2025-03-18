@@ -5,23 +5,20 @@ use('practica');
 db.restaurants.aggregate([
   /*
   lookup per fer un join de les dues col·leccions, incrustant l'historial d'inspeccions a cada restaurant.
-  - com que $restauran_id és un string i no un ObjectId, s'ha de fer un cast a ObjectId per poder comparar amb el camp _id de la col·lecció restaurants
-  - let guarda _id de la col·lecció restaurants a la variable restaurantId
-  - pipeline és un array amb les operacions a aplicar a la col·lecció inspections, en aquest cas, un match per comparar restaurant_id amb restaurantId
+  - com que $restauran_id és un string i no un ObjectId, afegim un valor al restaurant que sigui un cast a string del seu _id
+  -- és més eficient fer el cast de ObjectId a string que de string a ObjectId ja que hi ha menys restaurants que inspeccions
+  - s'utilitza stringId per comparar amb restaurant_id
   - as guarda el resultat de la join a inspection_history
   */
-  { "$lookup": {
-        "from": "inspections",
-        "let": { "restaurantId": "$_id" },  
-        "pipeline": [
-          {
-            "$match": {
-              "$expr": { "$eq": [ { "$toObjectId": "$restaurant_id" }, "$$restaurantId" ] }
-            }
-          }
-        ],
-        "as": "inspection_history"
-  } },
+  { $addFields: {
+    stringId: { $toString: "$_id" }
+    } },
+  { $lookup: {
+          "from": "inspections",
+          "localField": "stringId",
+          "foreignField": "restaurant_id",
+          "as": "inspection_history"
+    } },
 
   /*
   addFields per calcular el nombre d'inspeccions passades, fallades, amb violació, sense violació i amb avís
